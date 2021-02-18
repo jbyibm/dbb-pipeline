@@ -305,6 +305,7 @@ url=${artiUrl}
                                         deployVersions: ucdComponent + ':latest'],
                                     siteName: ucdSite])
                         }
+                        publishDeployRecord environment: "dev", appUrl: "https://tivlp02.svl.ibm.com:9443/genapp/motorPolicy/2/1", result:"SUCCESS"
                     }
                 }
             }
