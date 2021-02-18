@@ -52,6 +52,16 @@ String getArtifactoruUrl(String artiUrl) {
 
 pipeline {
 
+    environment {
+        // Three environment variables are needed for DevOps Insights
+        // IBM_CLOUD_DEVOPS_APP_NAME -> This is the name of the application that shows up in the dashboard
+        // IBM_CLOUD_DEVOPS_TOOLCHAIN_ID -> This is your toolchain id, for this tutorial the value for it is set in the Jenkins configuration page
+        // IBM_CLOUD_DEVOPS_API_KEY -> This is the api key for your account that also has access to the toolchain, the value for this is specified in Jenkins credentials.
+        IBM_CLOUD_DEVOPS_API_KEY = credentials('JBY_IBM_CLOUD_DEVOPS_CREDS')
+        IBM_CLOUD_DEVOPS_APP_NAME = 'CICS-GENAPP'
+        IBM_CLOUD_DEVOPS_TOOLCHAIN_ID = '252096df-9d77-4f0c-8da2-e61180f373ea'
+    }
+
     agent { label linuxAgent }
 
     options { skipDefaultCheckout(true) }
@@ -98,6 +108,8 @@ pipeline {
                                                 userRemoteConfigs: [[
                                                                      url: srcGitRepo,
                                                                      ]]])
+                        env.GIT_COMMIT_CICS_GENAPP =  scmVars.GIT_COMMIT
+                        env.GIT_URL_CICS_GENAPP =  scmVars.GIT_URL                                                                     
                     }
                     
                     dir("dbb-zappbuild") {
@@ -206,9 +218,16 @@ pipeline {
                 }
                 unstable {
                     script{
+                         publishBuildRecord gitBranch: "${srcGitRepo}", gitCommit: "${env.GIT_COMMIT_CICS_GENAPP}", gitRepo: "${env.GIT_URL_CICS_GENAPP}", result:"FAIL"
                          error ("zUnit tests failed!!!")
                     }
-                } 
+                }
+                success {
+                    publishBuildRecord gitBranch: "${srcGitRepo}", gitCommit: "${env.GIT_COMMIT_CICS_GENAPP}", gitRepo: "${env.GIT_URL_CICS_GENAPP}", result:"SUCCESS"
+                }
+                failure {
+                    publishBuildRecord gitBranch: "${srcGitRepo}", gitCommit: "${env.GIT_COMMIT_CICS_GENAPP}", gitRepo: "${env.GIT_URL_CICS_GENAPP}", result:"FAIL"
+                }
             }
         }
         
