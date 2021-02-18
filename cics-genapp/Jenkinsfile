@@ -255,6 +255,7 @@ pipeline {
                             sh "mkdir -p ${WORKSPACE}/BUILD-${BUILD_NUMBER}"
                             writeFile file: "${WORKSPACE}/BUILD-${BUILD_NUMBER}/CodeReviewJUNIT.xml", text:crContent.trim()
                             junit allowEmptyResults: true, testResults: "BUILD-${BUILD_NUMBER}/CodeReviewJUNIT.xml"
+                            publishTestResult type:'unittest', fileLocation: 'BUILD-${BUILD_NUMBER}/CodeReviewJUNIT.xml'
                         }
                     }
                 }
