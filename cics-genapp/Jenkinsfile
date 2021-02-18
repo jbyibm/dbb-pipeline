@@ -189,6 +189,7 @@ pipeline {
                             xsltproc /tmp/AZUZ2J30.xsl /tmp/zUnit.zunit > ${WORKSPACE}/zUnit.xml
                         ''')
                         junit "zUnit.xml"
+                        publishTestResult type:'unittest', fileLocation: 'zUnit.xml'
                     }
                     if ( cccFolder != null ) {
                         env.CCC_FOLDER = cccFolder
