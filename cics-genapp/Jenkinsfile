@@ -264,7 +264,7 @@ pipeline {
         
         stage('IBM Cloud Gate') {
             // use "evaluateGate" method to leverage IBM Cloud DevOps gate
-            evaluateGate policy: 'Unit Tests', forceDecision: 'true'
+            evaluateGate policy: 'JUnit', forceDecision: 'true'
         }
             
         stage('UCD Package') {
