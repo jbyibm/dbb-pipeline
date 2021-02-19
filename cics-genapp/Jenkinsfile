@@ -109,7 +109,7 @@ pipeline {
                                                                      url: srcGitRepo,
                                                                      ]]])
                         env.GIT_COMMIT_CICS_GENAPP =  scmVars.GIT_COMMIT
-                        env.GIT_URL_CICS_GENAPP =  scmVars.GIT_URL                                                                     
+                        env.GIT_URL_CICS_GENAPP =  scmVars.GIT_URL
                     }
                     
                     dir("dbb-zappbuild") {
