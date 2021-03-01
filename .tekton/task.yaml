@@ -11,6 +11,10 @@ spec:
       default: master
     - name: apikey
       description: the ibmcloud api key
+    - name: zosSshKey
+      description: The z/OS SSH private key
+    - name: appName
+      description: The application name
     - name: api
       description: the ibmcloud api endpoint
       default: "https://cloud.ibm.com"
