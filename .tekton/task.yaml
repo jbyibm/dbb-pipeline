@@ -23,9 +23,9 @@ spec:
       description: the ibmcloud registry region
   workspaces:
   - name: task-pvc
-    mountPath: /artifacts   
+    mountPath: /artifacts
   steps:
-    - name: clone-repo
+    - name: dbb-build-task
       image: alpine/git
       env:
         - name: REPOSITORY

@@ -26,9 +26,9 @@ spec:
   workspaces:
   - name: pipeline-pvc
   tasks:
-    - name: pipeline-build-task
+    - name: pipeline-dbb-build-task
       taskRef:
-        name: build-task
+        name: dbb-build-task
       params:
         - name: repository
           value: $(params.repository)
