@@ -32,7 +32,6 @@ spec:
           value: $(params.repository)
         - name: REVISION
           value: $(params.revision)
-      command: ["/bin/bash", "-c"]
-      args:
-        - set -e -o pipefail;
-          echo "Cloning $REPOSITORY";
+      script: |
+        #!/bin/bash
+        echo "test"
