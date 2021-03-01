@@ -40,7 +40,7 @@ spec:
           value: $(params.appName)
       script: |
         #!/bin/bash
-        #env
+        env
         echo $ZOS_SSH_KEY | base64 -w 0 --decode > id_rsa
         chmod 700 id_rsa
         ssh -i id_rsa -o "StrictHostKeyChecking=no" jenkins@zdevops-demo1.fyre.ibm.com\

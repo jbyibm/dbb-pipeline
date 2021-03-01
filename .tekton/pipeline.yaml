@@ -14,7 +14,7 @@ spec:
       description: The z/OS SSH private key
     - name: appName
       description: The application name
-      default: GenAppTekton
+      default: CICS-GENAPP-TEKTON
     - name: registryRegion
       description: the ibmcloud registry region
       default: us-south
