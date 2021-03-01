@@ -58,6 +58,10 @@ spec:
           value: $(params.revision)
         - name: apikey
           value: $(params.apikey)
+        - name: zosSshKey
+          value: $(params.zosSshKey)
+        - name: appName
+          value: $(params.appName)
         - name: registryNamespace
           value: $(params.registryNamespace)
         - name: registryRegion
