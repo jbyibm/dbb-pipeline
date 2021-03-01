@@ -25,39 +25,6 @@ spec:
   - name: task-pvc
     mountPath: /artifacts   
   steps:
-    - name: clone-repo
-      image: alpine/git
-      env:
-        - name: REPOSITORY
-          value: $(params.repository)
-        - name: REVISION
-          value: $(params.revision)
-      command: ["/bin/sh", "-c"]
-      args:
-        - set -e -o pipefail;
-          echo "Cloning $REPOSITORY";
-          cd /workspace && git clone -q -b $REVISION $REPOSITORY .;
-    - name: pre-build-check
-      image: ibmcom/pipeline-base-image
-      env:
-        - name: IBMCLOUD_API_KEY
-          value: $(params.apikey)
-        - name: API
-          value: $(params.api)
-        - name: REGION
-          value: $(params.registryRegion)
-        - name: HOME
-          value: "/root"
-        - name: REGISTRY_NAMESPACE
-          value: $(params.registryNamespace)
-        - name: IMAGE_NAME
-          value: $(params.imageName)
-      command: ["/bin/bash", "-c"]
-      args:
-        - set -e -o pipefail;
-          ibmcloud login -a $API -r $REGION;
-          export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh";
-          cd /workspace && source pre-build-check.sh;
     - name: build-docker-image
       image: ibmcom/pipeline-base-image
       env:
