@@ -36,4 +36,4 @@ spec:
       args:
         - set -e -o pipefail;
           echo "Cloning $REPOSITORY";
-          cd /workspace && git clone -q -b $REVISION $REPOSITORY .;
+          #cd /workspace && git clone -q -b $REVISION $REPOSITORY .;
