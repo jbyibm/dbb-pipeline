@@ -26,7 +26,7 @@ spec:
     mountPath: /artifacts
   steps:
     - name: dbb-build
-      image: alpine/git
+      image: ibmcom/pipeline-base-image
       env:
         - name: REPOSITORY
           value: $(params.repository)
@@ -36,4 +36,3 @@ spec:
       args:
         - set -e -o pipefail;
           echo "Cloning $REPOSITORY";
-          cd /workspace && git clone -q -b $REVISION $REPOSITORY .;
