@@ -5,11 +5,11 @@ metadata:
 spec:
   params:
     - name: repository
-      description: The git repo
+      description: the git repo
     - name: revision
-      description: The branch for the git repo
+      description: the branch for the git repo
     - name: apikey
-      description: The ibmcloud api key
+      description: the ibmcloud api key
     - name: zosSshKey
       description: The z/OS SSH private key
     - name: appName

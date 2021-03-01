@@ -27,7 +27,7 @@ spec:
         - name: REVISION
           value: $(params.revision)
         - name: IBMCLOUD_API_KEY
-          value: $(params.apikey
+          value: $(params.apikey)
         - name: ZOS_SSH_KEY
           value: $(params.zosSshKey)
         - name: MY_APP_NAME
@@ -49,6 +49,7 @@ spec:
         cd ..
         
         ibmcloud plugin install -f doi
+        echo $IBMCLOUD_API_KEY
         ibmcloud login --apikey $IBMCLOUD_API_KEY --no-region
         ibmcloud doi publishbuildrecord --logicalappname="$MY_APP_NAME" --buildnumber="$MY_BUILD_NUMBER" --branch="$GIT_BRANCH" --repositoryurl="$GIT_URL" --commitid="$GIT_COMMIT" --status=pass
         
