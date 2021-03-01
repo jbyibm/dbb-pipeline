@@ -5,15 +5,16 @@ metadata:
 spec:
   params:
     - name: repository
-      description: the git repo
+      description: The git repo
     - name: revision
-      description: the branch for the git repo
+      description: The branch for the git repo
     - name: apikey
-      description: the ibmcloud api key
-    - name: registryNamespace
-      description: the ibmcloud registry namespace
-    - name: cluster
-      description: The IBM Cloud Kubernetes cluster name
+      description: The ibmcloud api key
+    - name: zosSshKey
+      description: The z/OS SSH private key
+    - name: appName
+      description: The application name
+      default: GenAppTekton
     - name: registryRegion
       description: the ibmcloud registry region
       default: us-south
@@ -36,10 +37,10 @@ spec:
           value: $(params.revision)
         - name: apikey
           value: $(params.apikey)
-        - name: registryNamespace
-          value: $(params.registryNamespace)
-        - name: registryRegion
-          value: $(params.registryRegion)
+        - name: zosSshKey
+          value: $(params.zosSshKey)
+        - name: appName
+          value: $(params.appName)
       workspaces:
       - name: task-pvc
         workspace: pipeline-pvc

@@ -32,8 +32,36 @@ spec:
           value: $(params.repository)
         - name: REVISION
           value: $(params.revision)
+        - name: IBMCLOUD_API_KEY
+          value: $(params.apikey
+        - name: ZOS_SSH_KEY
+          value: $(params.zosSshKey)
+        - name: MY_APP_NAME
+          value: $(params.appName)
       script: |
         #!/bin/bash
-        echo "test"
-        which ssh
-        which sftp
+        #env
+        echo $ZOS_SSH_KEY | base64 -w 0 --decode > id_rsa
+        chmod 700 id_rsa
+        ssh -i id_rsa -o "StrictHostKeyChecking=no" jenkins@zdevops-demo1.fyre.ibm.com\
+           -p 222 "/u/jenkins/ibmcloud/build.sh $BUILD_NUMBER"
+        rc=$?
+        
+        mkdir zoslog
+        cd zoslog
+        sftp -o "StrictHostKeyChecking=no"  -i ../id_rsa  -P 222 jenkins@zdevops-demo1.fyre.ibm.com<<EOF
+        mget /u/jenkins/ibmcloud/dbb-pipeline/BUILD-$BUILD_NUMBER/*/*
+        EOF
+        cd ..
+        
+        ibmcloud plugin install -f doi
+        ibmcloud login --apikey $IBMCLOUD_API_KEY --no-region
+        ibmcloud doi publishbuildrecord --logicalappname="$MY_APP_NAME" --buildnumber="$MY_BUILD_NUMBER" --branch="$GIT_BRANCH" --repositoryurl="$GIT_URL" --commitid="$GIT_COMMIT" --status=pass
+        
+        
+        for file in $(find  zoslog -name "*.xml")
+        do
+          ibmcloud doi publishtestrecord --logicalappname="$MY_APP_NAME" --buildnumber="$MY_BUILD_NUMBER" --filelocation=$file --type=unittest
+        done
+        
+        rm -f id_rsa
