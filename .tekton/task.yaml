@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: build-task
+  name: dbb-build-task
 spec:
   params:
     - name: repository
@@ -25,7 +25,7 @@ spec:
   - name: task-pvc
     mountPath: /artifacts
   steps:
-    - name: dbb-build-task
+    - name: dbb-build
       image: alpine/git
       env:
         - name: REPOSITORY
