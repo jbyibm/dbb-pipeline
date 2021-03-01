@@ -15,16 +15,6 @@ spec:
       description: The z/OS SSH private key
     - name: appName
       description: The application name
-    - name: api
-      description: the ibmcloud api endpoint
-      default: "https://cloud.ibm.com"
-    - name: registryNamespace
-      description: the ibmcloud registry namespace
-    - name: imageName
-      description: the base image name
-      default: "hello-containers-tekton"
-    - name: registryRegion
-      description: the ibmcloud registry region
   workspaces:
   - name: task-pvc
     mountPath: /artifacts
