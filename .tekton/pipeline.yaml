@@ -45,6 +45,8 @@ spec:
           value: $(params.pipeline-debug)
         - name: properties-file
           value: ""
+        - name: git-client-image
+          value: "icr.io/continuous-delivery/pipeline/pipeline-base-image:2.11"
       workspaces:
         - name: output
           workspace: pipeline-ws
