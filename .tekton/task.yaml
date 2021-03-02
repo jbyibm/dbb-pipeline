@@ -30,8 +30,22 @@ spec:
           value: $(params.apikey)
         - name: ZOS_SSH_KEY
           value: $(params.zosSshKey)
-        - name: MY_APP_NAME
+        - name: APP_NAME
           value: $(params.appName)
+        - name: GIT_URL
+          value: $(params.git-repository)
+        - name: GIT_BRANCH
+          value: $(params.git-branch)
+        - name: GIT_COMMIT
+          value: $(params.git-commit)
+        - name: JOB_URL
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.annotations['devops.cloud.ibm.com/pipeline-run-url']
+        - name: BUILD_NUMBER
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.annotations['devops.cloud.ibm.com/build-number']
       script: |
         #!/bin/bash
         env
@@ -48,15 +62,37 @@ spec:
         EOF
         cd ..
         
+        # Default Toolchain ID if needed
+        if [ -z "$TOOLCHAIN_ID" ]; then
+          TOOLCHAIN_ID=$(jq -r '.toolchain_guid' /cd-config/toolchain.json)
+        fi
+        export TOOLCHAIN_ID=${TOOLCHAIN_ID} # for doi plugin
+        
         ibmcloud plugin install -f doi
-        echo $IBMCLOUD_API_KEY
         ibmcloud login --apikey $IBMCLOUD_API_KEY --no-region
-        ibmcloud doi publishbuildrecord --logicalappname="$MY_APP_NAME" --buildnumber="$MY_BUILD_NUMBER" --branch="$GIT_BRANCH" --repositoryurl="$GIT_URL" --commitid="$GIT_COMMIT" --status=pass
+        ibmcloud doi publishbuildrecord --logicalappname="$APP_NAME" --buildnumber="$BUILD_NUMBER"\
+              --branch="$GIT_BRANCH" --repositoryurl="$GIT_URL" --commitid="$GIT_COMMIT"\
+              --joburl="$JOB_URL" --status=pass
         
         
         for file in $(find  zoslog -name "*.xml")
         do
-          ibmcloud doi publishtestrecord --logicalappname="$MY_APP_NAME" --buildnumber="$MY_BUILD_NUMBER" --filelocation=$file --type=unittest
+          ibmcloud doi publishtestrecord --logicalappname="$APP_NAME" --buildnumber="$BUILD_NUMBER" --filelocation=$file --type=unittest
         done
         
         rm -f id_rsa
+        
+
+        # Record task results
+        echo -n "${BUILD_NUMBER}" > $(results.build-number.path)
+
+      volumeMounts:
+        - mountPath: /cd-config
+          name: cd-config-volume
+  volumes:
+    - name: cd-config-volume
+      configMap:
+        name: toolchain
+        items:
+          - key: toolchain.json
+            path: toolchain.json
