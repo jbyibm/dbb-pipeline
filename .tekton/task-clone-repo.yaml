@@ -206,6 +206,7 @@ spec:
           value: $(params.properties-file)
         - name: JSON_FILE_GIT_CREDENTIALS
           value: $(params.git-credentials-json-file)
+      workingDir: "/artifacts"
       script: |
         #!/bin/bash
         set -e
