@@ -234,7 +234,7 @@ spec:
         echo "Cloning $REPOSITORY"
         # Add the proper creds to the git repository
         GIT_URL=$(echo "$REPOSITORY" | sed -e "s/:\/\//:\/\/$GIT_AUTH_USER:$GIT_TOKEN@/g")
-        ARTIFACTS_PATH= $PWD #"$(workspaces.output.path)"
+        ARTIFACTS_PATH= "/tmp" #"$(workspaces.output.path)"
         cd $ARTIFACTS_PATH
         echo $ARTIFACTS_PATH
         echo $PWD
