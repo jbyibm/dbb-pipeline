@@ -25,7 +25,7 @@ spec:
       description: The Kubernetes cluster namespace
       default: prod
   workspaces:
-  - name: pipeline-pvc
+  - name: pipeline-ws
   tasks:
     - name: clone-task
       taskRef:
@@ -63,4 +63,4 @@ spec:
           value: $(params.appName)
       workspaces:
       - name: task-pvc
-        workspace: pipeline-pvc
+        workspace: pipeline-ws

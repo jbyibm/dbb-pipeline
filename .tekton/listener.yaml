@@ -48,7 +48,7 @@ spec:
         pipelineRef:
             name: pipeline
         workspaces:
-          - name: pipeline-pvc
+          - name: pipeline-ws
             persistentVolumeClaim:
               claimName: pipelinerun-$(uid)-pvc
         params:
