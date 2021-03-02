@@ -6,7 +6,7 @@ spec:
   params:
     - name: repository
       description: The git repo
-    - name: revision
+    - name: branch
       description: the branch for the git repo
     - name: apikey
       description: the ibmcloud api key
@@ -54,8 +54,8 @@ spec:
         params:
         - name: repository
           value: $(params.repository)
-        - name: revision
-          value: $(params.revision)
+        - name: branch
+          value: $(params.branch)
         - name: apikey
           value: $(params.apikey)
         - name: zosSshKey
@@ -82,7 +82,7 @@ spec:
     - name: repository
       value: "https://github.com/jbyibm/dbb-pipeline"
     - name: revision
-      value: "ibmcloud"
+      value: "ibmcloud-tekton"
 ---
 apiVersion: tekton.dev/v1beta1
 kind: EventListener

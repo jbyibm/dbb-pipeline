@@ -6,7 +6,7 @@ spec:
   params:
     - name: repository
       description: the git repo
-    - name: revision
+    - name: branch
       description: the branch for the git repo
     - name: apikey
       description: the ibmcloud api key
@@ -53,8 +53,8 @@ spec:
       params:
         - name: repository
           value: $(params.repository)
-        - name: revision
-          value: $(params.revision)
+        - name: branch
+          value: $(params.branch)
         - name: apikey
           value: $(params.apikey)
         - name: zosSshKey
