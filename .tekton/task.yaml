@@ -6,8 +6,8 @@ spec:
   params:
     - name: repository
       description: the git repo
-    - name: 
-      description: the 
+    - name: branch
+      description: the branch for the git repo
       default: master
     - name: apikey
       description: the ibmcloud api key
@@ -21,6 +21,8 @@ spec:
       description: The repository branch on which the build has been performed
     - name: git-commit
       description: The git commit id
+    - name: pipeline-debug
+      default: "0"
   workspaces:
   - name: task-pvc
     mountPath: /artifacts
