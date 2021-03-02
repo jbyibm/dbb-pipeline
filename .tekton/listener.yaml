@@ -85,7 +85,7 @@ spec:
   params:
     - name: repository
       value: "https://github.com/jbyibm/dbb-pipeline"
-    - name: revision
+    - name: branch
       value: "ibmcloud-tekton"
 ---
 apiVersion: tekton.dev/v1beta1
