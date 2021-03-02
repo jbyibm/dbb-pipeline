@@ -63,6 +63,14 @@ spec:
           value: $(params.zosSshKey)
         - name: appName
           value: $(params.appName)
+        - name: git-repository
+          value: $(tasks.clone-task.results.git-repository)
+        - name: git-branch
+          value: $(tasks.clone-task.results.git-branch)
+        - name: git-commit
+          value: $(tasks.clone-task.results.git-commit)
+        - name: pipeline-debug
+          value: $(params.pipeline-debug)
       workspaces:
       - name: task-pvc
         workspace: pipeline-ws
