@@ -239,6 +239,7 @@ spec:
         echo $ARTIFACTS_PATH
         echo $PWD
         echo $DIRECTORY_NAME
+        whoami
         if [ "$REVISION" ]; then
           # check if the branch exists (that may not be the case in case of a pipeline-run re-run)
           echo "Fetching specific -${REVISION}- commit"
