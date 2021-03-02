@@ -15,6 +15,12 @@ spec:
       description: The z/OS SSH private key
     - name: appName
       description: The application name
+    - name: git-repository
+      description: The url of the git repository
+    - name: git-branch
+      description: The repository branch on which the build has been performed
+    - name: git-commit
+      description: The git commit id
   workspaces:
   - name: task-pvc
     mountPath: /artifacts
