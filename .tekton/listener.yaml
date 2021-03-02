@@ -15,6 +15,8 @@ spec:
     - name: appName
       description: The application name
       default: CICS-GENAPP-TEKTON
+    - name: pipeline-debug
+      default: "0"
     - name: registryNamespace
       description: the ibmcloud registry namespace
     - name: registryRegion
@@ -62,6 +64,8 @@ spec:
           value: $(params.zosSshKey)
         - name: appName
           value: $(params.appName)
+        - name: pipeline-debug
+          value: $(params.pipeline-debug)
         - name: registryNamespace
           value: $(params.registryNamespace)
         - name: registryRegion
