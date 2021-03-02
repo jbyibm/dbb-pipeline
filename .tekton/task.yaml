@@ -56,13 +56,13 @@ spec:
               fieldPath: metadata.annotations['devops.cloud.ibm.com/build-number']
       script: |
         #!/bin/bash
-        env
+        #env
         echo $ZOS_SSH_KEY | base64 -w 0 --decode > id_rsa
         chmod 700 id_rsa
         ssh -i id_rsa -o "StrictHostKeyChecking=no" jenkins@zdevops-demo1.fyre.ibm.com\
            -p 222 "/u/jenkins/ibmcloud/build.sh $BUILD_NUMBER"
         rc=$?
-        
+        echo $PWD
         mkdir zoslog
         cd zoslog
         sftp -o "StrictHostKeyChecking=no"  -i ../id_rsa  -P 222 jenkins@zdevops-demo1.fyre.ibm.com<<EOF
@@ -90,10 +90,6 @@ spec:
         
         rm -f id_rsa
         
-
-        # Record task results
-        echo -n "${BUILD_NUMBER}" > $(results.build-number.path)
-
       volumeMounts:
         - mountPath: /cd-config
           name: cd-config-volume
