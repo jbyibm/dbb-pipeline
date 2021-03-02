@@ -34,7 +34,7 @@ spec:
       default: ""
     - name: git-client-image
       description: The image to use to run git clone commands
-      default: icr.io/continuous-delivery/pipeline/pipeline-base-image:2.11
+      default: alpine/git
     - name: git-max-retry
       description: max retry for the git clone operation
       default: "1"
