@@ -46,7 +46,7 @@ spec:
         - name: properties-file
           value: ""
         - name: git-client-image
-          value: "openshift-pipelines-tech-preview/pipelines-git-init-rhel8"
+          value: "registry.access.redhat.com/rhel7"
       workspaces:
         - name: output
           workspace: pipeline-ws
