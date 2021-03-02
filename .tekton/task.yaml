@@ -57,12 +57,13 @@ spec:
       script: |
         #!/bin/bash
         #env
+        echo $PWD
+        whoami
         echo $ZOS_SSH_KEY | base64 -w 0 --decode > id_rsa
         chmod 700 id_rsa
         ssh -i id_rsa -o "StrictHostKeyChecking=no" jenkins@zdevops-demo1.fyre.ibm.com\
            -p 222 "/u/jenkins/ibmcloud/build.sh $BUILD_NUMBER"
         rc=$?
-        echo $PWD
         mkdir zoslog
         cd zoslog
         sftp -o "StrictHostKeyChecking=no"  -i ../id_rsa  -P 222 jenkins@zdevops-demo1.fyre.ibm.com<<EOF
