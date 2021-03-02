@@ -41,6 +41,8 @@ spec:
           value: $(params.repository)
         - name: branch
           value: $(params.branch)
+        - name: directory-name
+          value: "git"
         - name: pipeline-debug
           value: $(params.pipeline-debug)
         - name: properties-file
