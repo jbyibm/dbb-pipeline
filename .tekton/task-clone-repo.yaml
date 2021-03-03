@@ -97,6 +97,8 @@ spec:
       env:
         - name: REPOSITORY
           value: $(params.repository)
+      securityContext:
+        privileged: true
       script: |
         #!/bin/bash
         set -e -o pipefail
