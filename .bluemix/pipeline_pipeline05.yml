@@ -1,0 +1,26 @@
+private_worker: ${private_worker01}
+properties:
+  - type: secure
+    name: apikey
+    value: ""
+  - type: secure
+    name: zosSshKey
+    value: ""
+triggers:
+  - type: manual
+    name: Manual Trigger - 0
+    eventListener: listener
+    properties: []
+  - type: git
+    branch: ibmcloud-tekton
+    events:
+      push: true
+    name: Git Trigger - 0
+    eventListener: listener
+    properties: []
+    service: ${githubconsolidated00}
+inputs:
+  - type: git
+    path: .tekton
+    branch: ibmcloud-tekton
+    service: ${githubconsolidated00}
