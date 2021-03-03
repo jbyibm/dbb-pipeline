@@ -17,19 +17,6 @@ spec:
       default: CICS-GENAPP-TEKTON
     - name: pipeline-debug
       default: "0"
-    - name: registryNamespace
-      description: the ibmcloud registry namespace
-    - name: registryRegion
-      description: the ibmcloud registry region
-      default: us-south
-    - name: cluster
-      description: The IBM Cloud Kubernetes cluster name
-    - name: clusterRegion
-      description: The IBM Cloud Kubernetes cluster region
-      default: us-south
-    - name: clusterNamespace
-      description: The Kubernetes cluster namespace
-      default: prod
   resourcetemplates:
     - apiVersion: v1
       kind: PersistentVolumeClaim
@@ -67,16 +54,6 @@ spec:
           value: $(params.appName)
         - name: pipeline-debug
           value: $(params.pipeline-debug)
-        - name: registryNamespace
-          value: $(params.registryNamespace)
-        - name: registryRegion
-          value: $(params.registryRegion)
-        - name: cluster
-          value: $(params.cluster)
-        - name: clusterRegion
-          value: $(params.clusterRegion)
-        - name: clusterNamespace
-          value: $(params.clusterNamespace)
 ---
 apiVersion: tekton.dev/v1beta1
 kind: TriggerBinding
