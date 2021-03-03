@@ -34,7 +34,7 @@ spec:
     - apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
-        name: pipelinerun-zdevops-pvc
+        name: pipelinerun-$(uid)-pvc
       spec:
         resources:
           requests:
