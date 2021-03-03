@@ -18,7 +18,7 @@
       * Select customer details from DB2 table                         *
       *                                                                *
       *                                                                *
-      * MODIF: 06                                                      *
+      * MODIF: 07                                                      *
       ******************************************************************
        IDENTIFICATION DIVISION.
        PROGRAM-ID. LGICDB01.
