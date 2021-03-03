@@ -49,6 +49,9 @@ spec:
           value: ""
         - name: git-client-image
           value: "quay.io/wire/alpine-git"
+      workspaces:
+        - name: output
+          workspace: pipeline-ws
     - name: pipeline-dbb-build-task
       runAfter: [clone-task]
       taskRef:

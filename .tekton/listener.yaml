@@ -40,8 +40,9 @@ spec:
           requests:
             storage:  5Gi
         volumeMode: Filesystem
+        storageClassName: rook-ceph-cephfs-internal
         accessModes:
-          - ReadWriteOnce
+          - ReadWriteMany
     - apiVersion: tekton.dev/v1beta1
       kind: PipelineRun
       metadata:
