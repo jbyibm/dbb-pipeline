@@ -52,7 +52,7 @@ spec:
       workspaces:
         - name: output
           workspace: pipeline-ws
-      podTemplate:
+      podTemplates:
         securityContext:
           privileged: true
     - name: pipeline-dbb-build-task
