@@ -208,7 +208,7 @@ spec:
           value: $(params.git-credentials-json-file)
       workingDir: "/artifacts"
       script: |
-        #!/bin/bash
+        #!/bin/sh
         set -e
 
         if [ $PIPELINE_DEBUG == 1 ]; then
