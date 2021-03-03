@@ -101,6 +101,8 @@ spec:
         #!/bin/bash
         set -e -o pipefail
         
+        sleep 120 
+        
         touch /artifacts/test
 
         if [ $PIPELINE_DEBUG == 1 ]; then
