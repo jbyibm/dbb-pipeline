@@ -102,10 +102,6 @@ spec:
       script: |
         #!/bin/bash
         set -e -o pipefail
-        
-        #sleep 600
-        
-        touch /artifacts/test
 
         if [ $PIPELINE_DEBUG == 1 ]; then
             pwd
@@ -214,7 +210,6 @@ spec:
           value: $(params.properties-file)
         - name: JSON_FILE_GIT_CREDENTIALS
           value: $(params.git-credentials-json-file)
-      workingDir: "/artifacts"
       script: |
         #!/bin/sh
         set -e
@@ -239,17 +234,12 @@ spec:
 
         # If $BRANCH is a full git ref then only keep the name part
         BRANCH=$(echo ${BRANCH#"refs/heads/"})
-        sleep 120
+
         echo "Cloning $REPOSITORY"
         # Add the proper creds to the git repository
         GIT_URL=$(echo "$REPOSITORY" | sed -e "s/:\/\//:\/\/$GIT_AUTH_USER:$GIT_TOKEN@/g")
-        #ARTIFACTS_PATH="/tmp"
         ARTIFACTS_PATH="$(workspaces.output.path)"
         cd $ARTIFACTS_PATH
-        echo $ARTIFACTS_PATH
-        echo $PWD
-        echo $DIRECTORY_NAME
-        whoami
         if [ "$REVISION" ]; then
           # check if the branch exists (that may not be the case in case of a pipeline-run re-run)
           echo "Fetching specific -${REVISION}- commit"
@@ -389,8 +379,6 @@ spec:
         echo -n "${BRANCH}" > $(results.git-branch.path)
         echo -n "${GIT_COMMIT}" > $(results.git-commit.path)
         echo -n "${GIT_AUTH_USER}" > $(results.git-user.path)
-        
-
       volumeMounts:
         - mountPath: /steps
           name: steps-volume
