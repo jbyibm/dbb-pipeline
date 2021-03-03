@@ -54,6 +54,9 @@ spec:
           - name: pipeline-ws
             persistentVolumeClaim:
               claimName: pipelinerun-$(uid)-pvc
+        podTemplate:
+          securityContext:
+            privileged: true
         params:
         - name: repository
           value: $(params.repository)
