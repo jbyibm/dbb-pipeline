@@ -76,5 +76,5 @@ spec:
         - name: pipeline-debug
           value: $(params.pipeline-debug)
       workspaces:
-      - name: task-pvc
+      - name: output
         workspace: pipeline-ws

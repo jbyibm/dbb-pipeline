@@ -78,7 +78,7 @@ spec:
     - name: git-user
       description: The auth user that cloned the repository
   workspaces:
-    - name: task-pvc
+    - name: output
       description: The git repo will be cloned onto the volume backing this workspace
       mountPath: /artifacts
   stepTemplate:
@@ -236,7 +236,7 @@ spec:
         # Add the proper creds to the git repository
         GIT_URL=$(echo "$REPOSITORY" | sed -e "s/:\/\//:\/\/$GIT_AUTH_USER:$GIT_TOKEN@/g")
         #ARTIFACTS_PATH="/tmp"
-        ARTIFACTS_PATH="$(workspaces.task-pvc.path)"
+        ARTIFACTS_PATH="$(workspaces.output.path)"
         cd $ARTIFACTS_PATH
         echo $ARTIFACTS_PATH
         echo $PWD
