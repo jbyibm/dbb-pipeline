@@ -56,7 +56,8 @@ spec:
               claimName: pipelinerun-$(uid)-pvc
         podTemplate:
           securityContext:
-            privileged: true
+            runAsNonRoot: true
+            runAsUser: 1001
         params:
         - name: repository
           value: $(params.repository)
