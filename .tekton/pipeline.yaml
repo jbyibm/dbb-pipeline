@@ -52,6 +52,8 @@ spec:
       workspaces:
         - name: output
           workspace: pipeline-ws
+      securityContext:
+        privileged: true
     - name: pipeline-dbb-build-task
       runAfter: [clone-task]
       taskRef:
