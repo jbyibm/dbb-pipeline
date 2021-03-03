@@ -193,6 +193,8 @@ spec:
           name: steps-volume
     - name: clone-repo
       image: $(params.git-client-image)
+      securityContext:
+        privileged: true
       env:
         - name: REPOSITORY
           value: $(params.repository)
