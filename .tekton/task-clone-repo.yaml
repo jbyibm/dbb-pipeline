@@ -231,7 +231,7 @@ spec:
 
         # If $BRANCH is a full git ref then only keep the name part
         BRANCH=$(echo ${BRANCH#"refs/heads/"})
-
+        sleep 120
         echo "Cloning $REPOSITORY"
         # Add the proper creds to the git repository
         GIT_URL=$(echo "$REPOSITORY" | sed -e "s/:\/\//:\/\/$GIT_AUTH_USER:$GIT_TOKEN@/g")
@@ -382,7 +382,7 @@ spec:
         echo -n "${GIT_COMMIT}" > $(results.git-commit.path)
         echo -n "${GIT_AUTH_USER}" > $(results.git-user.path)
         
-        sleep 120
+
       volumeMounts:
         - mountPath: /steps
           name: steps-volume
