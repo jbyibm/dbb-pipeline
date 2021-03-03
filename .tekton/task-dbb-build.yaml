@@ -62,7 +62,7 @@ spec:
         echo $ZOS_SSH_KEY | base64 -w 0 --decode > id_rsa
         chmod 700 id_rsa
         ssh -i id_rsa -o "StrictHostKeyChecking=no" jenkins@zdevops-demo1.fyre.ibm.com\
-           -p 222 "/u/jenkins/ibmcloud/build.sh $BUILD_NUMBER"
+           -p 222 "/u/jenkins/ibmcloud/dbb-build.sh $BUILD_NUMBER $GIT_BRANCH"
         rc=$?
         mkdir zoslog
         cd zoslog
