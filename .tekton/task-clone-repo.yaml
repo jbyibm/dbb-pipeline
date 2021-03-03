@@ -101,7 +101,7 @@ spec:
         #!/bin/bash
         set -e -o pipefail
         
-        sleep 240 
+        sleep 600
         
         touch /artifacts/test
 
