@@ -40,7 +40,7 @@ spec:
           requests:
             storage:  5Gi
         volumeMode: Filesystem
-        storageClassName: balibalo
+        storageClassName: rook-ceph-cephfs-internal
         accessModes:
           - ReadWriteOnce
     - apiVersion: tekton.dev/v1beta1
