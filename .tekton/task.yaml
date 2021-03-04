@@ -1,0 +1,39 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: dbb-build-task
+spec:
+  params:
+    - name: repository
+      description: the git repo
+    - name: revision
+      description: the revision
+      default: master
+    - name: apikey
+      description: the ibmcloud api key
+    - name: api
+      description: the ibmcloud api endpoint
+      default: "https://cloud.ibm.com"
+    - name: registryNamespace
+      description: the ibmcloud registry namespace
+    - name: imageName
+      description: the base image name
+      default: "hello-containers-tekton"
+    - name: registryRegion
+      description: the ibmcloud registry region
+  workspaces:
+  - name: task-pvc
+    mountPath: /artifacts
+  steps:
+    - name: dbb-build
+      image: ibmcom/pipeline-base-image
+      env:
+        - name: REPOSITORY
+          value: $(params.repository)
+        - name: REVISION
+          value: $(params.revision)
+      script: |
+        #!/bin/bash
+        echo "test"
+        which ssh
+        which sftp
