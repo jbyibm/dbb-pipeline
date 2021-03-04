@@ -61,6 +61,8 @@ spec:
         whoami
         echo $ZOS_SSH_KEY | base64 -w 0 --decode > id_rsa
         chmod 700 id_rsa
+        # /u/jenkins/ibmcloud/dbb-build.sh is on the z/OS in this prototype it should
+        # be created here and pushed to the z/OS. We should also extract all build parameters.
         ssh -i id_rsa -o "StrictHostKeyChecking=no" jenkins@zdevops-demo1.fyre.ibm.com\
            -p 222 "/u/jenkins/ibmcloud/dbb-build.sh $BUILD_NUMBER $GIT_BRANCH"
         rc=$?
@@ -71,6 +73,8 @@ spec:
         EOF
         cd ..
         
+        # TODO: Use DOI tasks from the toolchain catalog: 
+        #   - https://github.com/open-toolchain/tekton-catalog/tree/master/devops-insights
         # Default Toolchain ID if needed
         if [ -z "$TOOLCHAIN_ID" ]; then
           TOOLCHAIN_ID=$(jq -r '.toolchain_guid' /cd-config/toolchain.json)
