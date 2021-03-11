@@ -1,0 +1,88 @@
+version: 2
+template:
+  name: Build your own toolchain
+  description: devops-toolchain-20210218223127683
+  required:
+    - githubconsolidated00
+    - private_worker02
+toolchain:
+  name: devops-toolchain-20210218223127683
+services:
+  githubconsolidated00:
+    parameters:
+      extra_capabilities:
+        - capability_id: git.issues
+          display_name: Issues
+          dashboard_url: https://github.com/jbyibm/dbb-pipeline/issues
+          label: dbb-pipeline
+          tags:
+            - think
+            - code
+          enabled: true
+          readme: false
+      label: dbb-pipeline
+      type: link
+      legal: false
+      git_id: github
+      blind_connection: false
+      owner_id: jbyibm
+      repo_url: https://github.com/jbyibm/dbb-pipeline.git
+      private_repo: false
+      has_issues: true
+      auto_init: false
+      enable_traceability: false
+      authorized: github
+      integration_owner: IBMid-060000HH7T
+      repo_name: dbb-pipeline
+      api_root_url: '****'
+      token_url: '****'
+    service_id: githubconsolidated
+  customtool01:
+    parameters:
+      imageUrl: https://ibm.gallerycdn.vsassets.io/extensions/ibm/zopeneditor/1.1.3/1607830731491/Microsoft.VisualStudio.Services.Icons.Default
+      label: IBM Wazi CodeReady Workspaces
+      type: IBM Wazi CodeReady Workspaces
+      lifecyclePhase: CODE
+      documentationUrl: https://www.ibm.com/fr-fr/products/wazi-developer
+      name: IBM Wazi CodeReady Workspaces
+      dashboard_url: https://codeready-wazi-development-client.apps.nazare-jby.os.fyre.ibm.com/dashboard/#/ide/admin/ibmcloud-zdevops
+      description: ""
+      additional-properties: ""
+    service_id: customtool
+  private_worker02:
+    parameters:
+      label: Worker On Wazi Cloud Area
+      name: Worker On Wazi Cloud Area
+      workerQueueIdentifier: ServiceId-27c6404a-96c3-4ec6-b665-30cf4f39e221
+      workerQueueCredentials:
+    service_id: private_worker
+  draservicebroker03:
+    parameters:
+      cf_controller: '****'
+      dra_server: '****'
+      dlms_server: '****'
+      dashboard_url: '****'
+      env_id: '****'
+    service_id: draservicebroker
+  orion04:
+    parameters:
+      toolchain_id: '****'
+      dashboard_url: '****'
+    service_id: orion
+  pipeline05:
+    parameters:
+      label: Classic
+      type: classic
+      name: Classic
+      ui_pipeline: true
+      api_url: '****'
+      external_api_url: '****'
+      configuration:
+        env:
+          private_worker02: '{{services.private_worker02.parameters.name}}'
+        content:
+          $text: pipeline_pipeline05.yml
+      services:
+        - githubconsolidated00
+        - private_worker02
+    service_id: pipeline

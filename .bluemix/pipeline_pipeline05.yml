@@ -1,0 +1,250 @@
+stages:
+  - name: Build
+    worker: ${private_worker02}
+    inputs:
+      - type: git
+        branch: ibmcloud
+        dir_name: null
+        service: githubconsolidated00
+    triggers:
+      - type: git
+        events: '{"push":true,"pull_request":false,"pull_request_closed":false}'
+    permission:
+      execute: TOOLCHAIN_ADMINS
+    properties:
+      - name: ZOS_SSH_KEY
+        type: secure
+      - name: MY_APP_NAME
+        value: CICS-GENAPP
+        type: text
+      - name: MY_BUILD_NUMBER
+        value: $GIT_BRANCH:$BUILD_NUMBER
+        type: text
+    jobs:
+      - name: DBB Build with zUnit
+        type: builder
+        curatedDockerImage: default
+        artifact_dir: ""
+        build_type: shell
+        script: |-
+          #!/bin/bash
+          #env
+          echo $ZOS_SSH_KEY | base64 -w 0 --decode > id_rsa
+          chmod 700 id_rsa
+          ssh -i id_rsa -o "StrictHostKeyChecking=no" jenkins@zdevops-demo1.fyre.ibm.com\
+             -p 222 "/u/jenkins/ibmcloud/dbb-build.sh $BUILD_NUMBER $GIT_BRANCH"
+          rc=$?
+
+          mkdir zoslog
+          cd zoslog
+          sftp -o "StrictHostKeyChecking=no"  -i ../id_rsa  -P 222 jenkins@zdevops-demo1.fyre.ibm.com<<EOF
+          mget /u/jenkins/ibmcloud/dbb-pipeline/BUILD-$BUILD_NUMBER/*/*
+          EOF
+          cd ..
+
+          #mget /u/jenkins/CCSONAR/LGIPOL01_2021_02_19_110010_0057/LGIPOL01_2021_02_19_110010_0057E.xml
+
+          echo "MY_APP_NAME=${MY_APP_NAME}" >> $ARCHIVE_DIR/build.properties
+          echo "MY_BUILD_NUMBER=${MY_BUILD_NUMBER}" >> $ARCHIVE_DIR/build.properties
+          echo "DBB_BUILD_NUMBER=${BUILD_NUMBER}" >> $ARCHIVE_DIR/build.properties
+
+          ibmcloud plugin install -f doi
+          ibmcloud login --apikey $API_KEY --no-region
+          ibmcloud doi publishbuildrecord --logicalappname="$MY_APP_NAME" --buildnumber="$MY_BUILD_NUMBER" --branch="$GIT_BRANCH" --repositoryurl="$GIT_URL" --commitid="$GIT_COMMIT" --status=pass
+
+          #ibmcloud doi testrecord-publish --logicalappname "$MY_APP_NAME" --buildnumber "$MY_BUILD_NUMBER" --filelocation "zoslog/LGIPOL01_2021_02_19_110010_0057E.xml" --type=sonarqube --sqtoken=NOTUSED
+
+          for file in $(find  zoslog -name "*.xml")
+          do
+            ibmcloud doi publishtestrecord --logicalappname="$MY_APP_NAME" --buildnumber="$MY_BUILD_NUMBER" --filelocation=$file --type=unittest
+          done
+
+          rm -f id_rsa
+        enable_tests: true
+        test_file_pattern: zoslog/*.xml
+  - name: IDZ Code Review
+    worker: ${private_worker02}
+    inputs:
+      - type: job
+        stage: Build
+        job: DBB Build with zUnit
+        dir_name: null
+    triggers:
+      - type: stage
+    permission:
+      execute: TOOLCHAIN_MEMBERS
+    properties:
+      - name: MY_APP_NAME
+        value: CICS-GENAPP
+        type: text
+    jobs:
+      - name: IDZ Code Review
+        type: tester
+        curatedDockerImage: default
+        script: |-
+          #!/bin/bash
+          #env
+          #echo $MY_BUILD_NUMBER
+          cat build.properties
+          export DBB_BUILD_NUMBER=$(grep DBB_BUILD_NUMBER build.properties |  cut -d "=" -f2)
+          export MY_BUILD_NUMBER=$(grep MY_BUILD_NUMBER build.properties |  cut -d "=" -f2)
+
+          echo $ZOS_SSH_KEY | base64 -w 0 --decode > id_rsa
+          chmod 700 id_rsa
+
+          #cd zoslog
+          #sftp -o "StrictHostKeyChecking=no"  -i ../id_rsa  -P 222 jenkins@zdevops-demo1.fyre.ibm.com<<EOF
+          #cd /u/jenkins/ibmcloud/dbb-pipeline
+          #mkdir BUILDCR-$BUILD_NUMBER
+          #cd BUILDCR-$BUILD_NUMBER
+          #mput *.json
+          #EOF
+          #cd -
+
+          ssh -i id_rsa -o "StrictHostKeyChecking=no" jenkins@zdevops-demo1.fyre.ibm.com\
+             -p 222 "/u/jenkins/ibmcloud/idz-code-review.sh $DBB_BUILD_NUMBER "
+          rc=$?
+
+          mkdir -p zoslog
+          cd zoslog
+          sftp -o "StrictHostKeyChecking=no"  -i ../id_rsa  -P 222 jenkins@zdevops-demo1.fyre.ibm.com<<EOF
+          mget /u/jenkins/ibmcloud/dbb-pipeline/BUILD-$DBB_BUILD_NUMBER/*/CodeReviewJUNIT.xml
+          EOF
+          cd ..
+
+          ibmcloud login --apikey $API_KEY --no-region
+          ibmcloud doi publishtestrecord --logicalappname="$MY_APP_NAME" --buildnumber="$MY_BUILD_NUMBER" --filelocation=zoslog/CodeReviewJUNIT.xml --type=unittest
+
+          rm -f id_rsa
+        enable_tests: true
+        test_file_pattern: zoslog/CodeReviewJUNIT.xml
+        test_type: simple
+  - name: Gate
+    worker: ${private_worker02}
+    inputs:
+      - type: job
+        stage: Build
+        job: DBB Build with zUnit
+        dir_name: null
+    triggers:
+      - type: stage
+    permission:
+      execute: TOOLCHAIN_ADMINS
+    properties:
+      - name: MY_APP_NAME
+        value: CICS-GENAPP
+        type: text
+    jobs:
+      - name: Evaluate Build Rules
+        type: tester
+        curatedDockerImage: default
+        script: |-
+          #!/bin/bash
+          export DBB_BUILD_NUMBER=$(grep DBB_BUILD_NUMBER build.properties |  cut -d "=" -f2)
+          export MY_BUILD_NUMBER=$(grep MY_BUILD_NUMBER build.properties |  cut -d "=" -f2)
+          ibmcloud plugin install -f doi
+          ibmcloud login --apikey $API_KEY --no-region
+          ibmcloud doi evaluategate --logicalappname="$MY_APP_NAME" --buildnumber="$MY_BUILD_NUMBER" --policy="JUNIT" --forcedecision
+        test_type: simple
+  - name: UCD Package
+    worker: ${private_worker02}
+    inputs:
+      - type: job
+        stage: Build
+        job: DBB Build with zUnit
+        dir_name: null
+    triggers:
+      - type: stage
+    permission:
+      execute: TOOLCHAIN_MEMBERS
+    properties:
+      - name: MY_APP_NAME
+        value: CICS-GENAPP
+        type: text
+    jobs:
+      - name: UCB Package
+        type: tester
+        curatedDockerImage: default
+        script: |-
+          #!/bin/bash
+          #env
+          #echo $MY_BUILD_NUMBER
+          cat build.properties
+          export DBB_BUILD_NUMBER=$(grep DBB_BUILD_NUMBER build.properties |  cut -d "=" -f2)
+          export MY_BUILD_NUMBER=$(grep MY_BUILD_NUMBER build.properties |  cut -d "=" -f2)
+
+          echo $ZOS_SSH_KEY | base64 -w 0 --decode > id_rsa
+          chmod 700 id_rsa
+
+          ssh -i id_rsa -o "StrictHostKeyChecking=no" jenkins@zdevops-demo1.fyre.ibm.com\
+             -p 222 "/u/jenkins/ibmcloud/ucd-package.sh  $DBB_BUILD_NUMBER "
+          rc=$?
+
+          rm -f id_rsa
+        test_type: simple
+  - name: UCD Deploy
+    worker: ${private_worker02}
+    inputs:
+      - type: job
+        stage: Build
+        job: DBB Build with zUnit
+        dir_name: null
+    triggers:
+      - type: stage
+    permission:
+      execute: TOOLCHAIN_MEMBERS
+    properties:
+      - name: MY_APP_NAME
+        value: CICS-GENAPP
+        type: text
+    jobs:
+      - name: UCB Deploy
+        type: tester
+        curatedDockerImage: default
+        script: |-
+          #!/bin/bash
+          #env
+          #echo $MY_BUILD_NUMBER
+
+          export DBB_BUILD_NUMBER=$(grep DBB_BUILD_NUMBER build.properties |  cut -d "=" -f2)
+          export MY_BUILD_NUMBER=$(grep MY_BUILD_NUMBER build.properties |  cut -d "=" -f2)
+
+          echo $ZOS_SSH_KEY | base64 -w 0 --decode > id_rsa
+          chmod 700 id_rsa
+
+          ssh -i id_rsa -o "StrictHostKeyChecking=no" jenkins@zdevops-demo1.fyre.ibm.com\
+             -p 222 "/u/jenkins/ibmcloud/ucd-deploy.sh  $DBB_BUILD_NUMBER "
+          rc=$?
+
+          if [ $rc -eq 0 ]; then STATUS=pass; else STATUS=fail; fi;
+
+          ibmcloud plugin install -f doi
+          ibmcloud login --apikey $API_KEY --no-region
+          ibmcloud doi publishdeployrecord --logicalappname="$MY_APP_NAME" --buildnumber="$MY_BUILD_NUMBER" --env="prod" --status=$STATUS
+
+          rm -f id_rsa
+        test_type: simple
+  - name: Integration Test
+    worker: ${private_worker02}
+    triggers:
+      - type: stage
+    permission:
+      execute: TOOLCHAIN_ADMINS
+    jobs:
+      - name: Test
+        type: tester
+        curatedDockerImage: default
+        script: |
+          #!/bin/bash
+          #Invoke tests here
+          curl --silent -k -u Deb:password -H "Content-Type:application/json"\
+                -X GET https://tivlp02.svl.ibm.com:9443/genapp/motorPolicy/2/1 | grep "2011-05-11"
+        test_type: simple
+properties:
+  - name: buildProperties
+    value: build.properties
+    type: text
+  - name: API_KEY
+    type: secure
+  - name: ZOS_SSH_KEY
+    type: secure
